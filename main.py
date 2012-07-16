@@ -18,6 +18,8 @@ import json
 import logging
 
 import webapp2
+from google.appengine.api import mail
+
 from  models import BotResults
 
 class MainHandler(webapp2.RequestHandler):
@@ -35,6 +37,14 @@ class BotHandler(webapp2.RequestHandler):
                              firebotBugs = data['firebotBugs'],
                              usersTalks = data['usersTalks'])
         results.put()
+        self._send_email(data)
+
+    def _send_email(self, data):
+        message = mail.EmailMessage()
+        message.sender = "david.burns@theautomatedtester.co.uk"
+        message.to = "david.burns@theautomatedtester.co.uk"
+        message.body = """%s
+        """ % json.dumps(data)
 
 app = webapp2.WSGIApplication([('/', MainHandler),
                               ('/bot', BotHandler)],
