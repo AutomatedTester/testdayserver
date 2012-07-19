@@ -21,6 +21,7 @@ import webapp2
 from google.appengine.api import mail
 
 from  models import BotResults
+from models import Speakers
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -35,16 +36,26 @@ class BotHandler(webapp2.RequestHandler):
                              greetedName = data['greetedName'],
                              greetedNumber = data['greetedNumber'],
                              firebotBugs = data['firebotBugs'],
-                             usersTalks = data['usersTalks'])
-        results.put()
+                             )
+        id = results.put()
+        logging.info(data['usersTalked'])
+        for k,v in data['usersTalked'].items():
+            speaker = Speakers(botresults = id,
+                               speaker=k,
+                               spoke=v)
+            speaker.put()
+
         self._send_email(data)
 
     def _send_email(self, data):
         message = mail.EmailMessage()
         message.sender = "david.burns@theautomatedtester.co.uk"
-        message.to = "david.burns@theautomatedtester.co.uk"
-        message.body = """%s
-        """ % json.dumps(data)
+        message.to = "dburns@mozilla.com, ahughes@mozilla.com"
+        message.body = """The following stats were collected from the following testday:
+            %s
+            %s
+        """ % (data['testday'], json.dumps(data))
+        message.send()
 
 app = webapp2.WSGIApplication([('/', MainHandler),
                               ('/bot', BotHandler)],

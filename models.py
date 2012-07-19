@@ -6,3 +6,8 @@ class BotResults(db.Model):
     greetedNumber = db.IntegerProperty()
     firebotBugs = db.StringListProperty()
     usersTalks = db.StringListProperty()
+
+class Speakers(db.Model):
+    botresults = db.ReferenceProperty()
+    speaker = db.StringProperty()
+    spoke = db.IntegerProperty()
