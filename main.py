@@ -51,6 +51,7 @@ class BotHandler(webapp2.RequestHandler):
         message = mail.EmailMessage()
         message.sender = "david.burns@theautomatedtester.co.uk"
         message.to = "dburns@mozilla.com, ahughes@mozilla.com"
+        message.subject = "Testday Stats for: %s " % data['testday'][29:]
         message.body = """The following stats were collected from the following testday:
             %s
             %s
